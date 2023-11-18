@@ -1,0 +1,12 @@
+"""
+DANGEROUS AND UNSECURE SOLUTION! NOT TO BE IMPLEMENTED IN PROD
+"""
+
+CREDS = {
+    "BINANCE_API_KEY": "",
+    "BINANCE_SECRET_KEY": "",
+    "TEST_API_KEY": "",
+    "TEST_SECRET_KEY": "",
+    "TG_API_TOKEN": "",
+    "TG_ID": 0 #int
+}

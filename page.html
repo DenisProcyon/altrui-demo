@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lightweight Charts</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            overflow-y: auto; 
+        }
+        .header, .chart-header {
+            text-align: center;
+        }
+        #backtest_chart, #live_chart {
+            width: 1200px;
+            height: 300px;
+            border: 1px solid #000; 
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #left-image, #right-image {
+            height: 300px; 
+            width: 300px; 
+        }
+        
+        #ticker {
+            margin: 0 10px; 
+        }
+
+        .tooltip {
+            position: absolute;
+            display: none;
+            background: white;
+            color: black;
+            border: 1px solid #2962FF;
+            border-radius: 2px;
+            pointer-events: none;
+            padding: 8px;
+            font-size: 12px;
+            z-index: 100;
+            white-space: nowrap;
+        }
+
+        #start-time {
+            margin: 10px;
+            font-size: 14px
+        }
+
+        #end-time {
+            margin: 10px;
+            font-size: 14px
+        }
+    </style>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="backend.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="header">Forward analysis</h1>
+        <div class="input-container">
+            <img id="left-image" src="files/k.png" alt="">
+            <input id="ticker" type="text" placeholder="Enter ticker">
+            <img id="right-image" src="files/k.png" alt="">
+        </div>
+        <div id="start-time">
+            <label for="datetime-input">Start time</label>
+            <input id="start-input">
+        </div>
+        <div id="end-time">
+            <label for="datetime-input">End time</label>
+            <input id="end-input">
+        </div>
+        <button onclick="getTickerAndPopulateCharts()">Populate charts</button>
+        <h2 class="chart-header">Backtest</h2>
+        <div id="backtest_chart"></div>
+        <div id="backtest_chart-info"></div> 
+        <h2 class="chart-header">Live</h2>
+        <div id="live_chart"></div>
+        <div id="live_chart-info"></div>
+    </div>
+</body>
+</html>
