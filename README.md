@@ -77,7 +77,7 @@
             ...
     ```
 
-- `wallet.py; backtest_sessions.json`
+- `fmath/wallet.py; files/backtest_sessions.json`
   - **Purpose**: Profitability calculations
   - **Usage**:
     ```json
