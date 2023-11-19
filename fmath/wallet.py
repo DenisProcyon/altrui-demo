@@ -7,12 +7,11 @@ from collections import defaultdict
 tickers_results = {}
 
 class Wallet:
-    def __init__(self, balance: float | int, leverage, hp_size: float, nhp_size: float, session_id: int, liq_p: float|int = None, isolated: bool = False):
+    def __init__(self, balance: float | int, leverage, order_size: float, session_id: int, liq_p: float|int = None, isolated: bool = False):
         self.market_fee = 0.04 / 100
         self.balance = balance
         self.session_id = session_id
-        self.hp_size = hp_size
-        self.nhp_size = nhp_size
+        self.order_size = order_size
         self.opened_positions = []
         self.balance_history = []
         self.leverage = leverage
@@ -56,7 +55,7 @@ class Wallet:
             position_size = 50 #self.balance * self.hp_size
         else:
             try:
-                position_size = self.balance * 0.01 * self.leverage
+                position_size = self.balance * self.order_size * self.leverage
             except Exception as e:
                 pass
         
@@ -168,5 +167,5 @@ class Wallet:
                     print(position)
                     break
 
-wallet = Wallet(balance=1000, leverage=25, hp_size=0.01, nhp_size=0.015, session_id=335583)
+wallet = Wallet(balance=1000, leverage=10, order_size=0.01, session_id=178193)
 wallet.calculate()
