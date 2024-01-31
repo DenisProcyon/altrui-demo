@@ -18,8 +18,8 @@ import inspect
 
 
 logging.basicConfig(format="%(asctime)s %(levelname)s - %(message)s", level=logging.INFO, handlers=[logging.FileHandler("trader.log"), logging.StreamHandler()])
-#bot = telebot.TeleBot()
-#TEL_USER = 0
+bot = telebot.TeleBot()
+TEL_USER = 0
 
 def ensure_balance(func):
     def get_balance(self, *args, **kwargs):
@@ -58,7 +58,7 @@ def get_quantity(ticker: str, balance: float, leverage: int, symbols_info: list[
             trigger = True
             quant_prec = 3
 
-    order_price = balance * 0.0285
+    order_price = balance * 0.01
     quantity = order_price / cur_price * leverage
 
     quantity = round(quantity, quant_prec)

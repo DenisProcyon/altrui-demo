@@ -1,7 +1,8 @@
 from ast import pattern
-from fmath.patterns import BasePattern, ksreversal, stochastic_momentum, kernel_regression, rvi
+from fmath.patterns import BasePattern, ksreversal, stochastic_momentum, kernel_regression, rvi, decision_tree
 import pandas as pd
 import numpy as np
+import operator
 
 pd.options.mode.chained_assignment = None
 
@@ -25,8 +26,10 @@ class BaseInstrument:
 
         self.custom_settings = custom_settings
 
-    def apply(self,) -> pd.DataFrame:
+    def apply(self) -> pd.DataFrame:
         match self.name:
+            case "DecisionTree":
+                return DecisionTree.get_data(self)
             case "SwingV2":
                 raise NotImplementedError # Not in Demo
             case "Swing":
@@ -41,6 +44,45 @@ class BaseInstrument:
                 return KSRSMI_BASIC.get_data(self)
             case "KSRSMI":
                 return KSRSMI.get_data(self) 
+
+class DTNode:
+    def __init__(self, ind: str, indp: int, opr: str, indv: float) -> None:
+        self.__OPERATORS = {
+            ">=": operator.ge,
+            "<=": operator.le,
+            ">": operator.gt,
+            "<": operator.lt
+        }
+
+        self.opr = self.__OPERATORS[opr]
+        self.ind = ind
+        self.indv = round(indv, 4)
+        self.indp = indp
+
+        self.__COND = f'If {self.ind} with period {self.indp} for particular candle is {opr} than {self.indv}'
+
+
+class DecisionTree(BaseInstrument):
+    def get_data(self):
+        decision_path = self.additional_config["decision_path"]
+
+        nodes = []
+
+        for node in decision_path:
+            nodes.append(DTNode(*node))
+        
+        nodes = tuple(nodes)
+
+        data = decision_tree.get_data(self.candles, nodes, mode=self.additional_config["mode"])
+
+        return ksreversal.get_data(
+            data,
+            fp=34,
+            sp=15,
+            sigp=16,
+            tp=2,
+            filtering_mode=True
+        )
 
 class KernelRegressionKS(BaseInstrument):
     def get_data(self):

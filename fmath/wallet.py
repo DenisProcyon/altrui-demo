@@ -51,13 +51,7 @@ class Wallet:
                 
 
     def open_position(self, position: dict):
-        if position.get("high_priority"):
-            position_size = 50 #self.balance * self.hp_size
-        else:
-            try:
-                position_size = self.balance * self.order_size * self.leverage
-            except Exception as e:
-                pass
+        position_size = self.balance * self.order_size * self.leverage
         
         commission = position_size * self.market_fee
         self.balance = self.balance - commission
@@ -167,5 +161,5 @@ class Wallet:
                     print(position)
                     break
 
-wallet = Wallet(balance=1000, leverage=10, order_size=0.01, session_id=178193)
+wallet = Wallet(balance=1000, leverage=10, order_size=0.01, session_id=786202)
 wallet.calculate()

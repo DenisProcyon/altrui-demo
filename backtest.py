@@ -35,7 +35,8 @@ def update_sessions(session: dict):
 
 session = {
     "id": randint(100000, 999999),
-    "result": []
+    "result": [],
+    "info": "Demo Session",
 }
 
 for ticker in tickers.copy():
@@ -43,11 +44,37 @@ for ticker in tickers.copy():
 
     candles = Candles(ticker=ticker, time_interval="15min", futures=True).get_historical_data(start, end)
 
+    decision_path = [
+        [
+        "BETA_SCORE", 5,
+        "<=", 1.280874252319336
+        ],
+        [
+        "ATR", 50,
+        ">", 2.323290755157359e-05
+        ],
+        [
+        "MIDPOINT_SCORE", 15,
+        "<=", 0.9998432099819183
+        ],
+        [
+        "WILLR", 45,
+        "<=", -48.16364669799805
+        ],
+        [
+        "MIDPOINT_SCORE", 15,
+        ">", 0.9942484796047211
+        ]
+    ]
+
     instrument = BaseInstrument(
-        name="KSReversal",
+        name="DecisionTree",
         candles=candles,
         ticker=ticker,
-        additional_config=["rvi"]
+        additional_config={
+            "decision_path": decision_path,
+            "mode": "buy",
+        }
     )
 
     data = instrument.apply()

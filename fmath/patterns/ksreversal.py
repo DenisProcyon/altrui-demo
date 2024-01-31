@@ -1,7 +1,7 @@
+from unicodedata import decimal
 import pandas as pd
 import talib as ta
 import numpy as np
-    
 
 def smi_combine(candles: pd.DataFrame, smi_data: pd.DataFrame):
     candles["p"] = None
@@ -20,39 +20,44 @@ def smi_combine(candles: pd.DataFrame, smi_data: pd.DataFrame):
     
     return candles
 
-def get_data(candles: list[dict], smi_mode: bool = False, smi_data: pd.DataFrame = None, sb_periods: list[dict] = None, fp: int = 34, sp: int = 15, sigp: int = 16, tp: int = 2):
+def get_data(candles: list[dict], filtering_mode: bool = False, filtering_data: pd.DataFrame = None, get_series: bool = False, series_type: str = None, fp: int = 34, sp: int = 15, sigp: int = 16, tp: int = 2):
     candles = pd.DataFrame(candles)
 
     macd_line, signal_line, _ = ta.MACD(candles["close"], fastperiod=fp, slowperiod=sp, signalperiod=sigp)
-    upper_boll, mid_line, lower_boll = ta.BBANDS(candles["close"], timeperiod=tp, nbdevup=4, nbdevdn=4)
+    upper_boll, mid_line, lower_boll = ta.BBANDS(candles["close"], timeperiod=tp, nbdevup=1.01, nbdevdn=1.01)
 
-    if not smi_mode:
+
+    if not filtering_mode:
         buy_signal = np.where((np.minimum(candles['open'].shift(1), candles['close'].shift(1)) <= lower_boll.shift(1)) & 
-                            (np.maximum(candles['open'].shift(1), candles['close'].shift(1)) <= mid_line) &
+                            (np.maximum(candles['open'].shift(1), candles['close'].shift(1)) <= mid_line) & 
                             (macd_line.shift(1) > signal_line.shift(1)) & 
                             (macd_line.shift(2) < signal_line.shift(2)), 1, 0) 
 
         sell_signal = np.where((np.maximum(candles['open'].shift(1), candles['close'].shift(1)) >= upper_boll.shift(1)) & 
-                            (np.minimum(candles['open'].shift(1), candles['close'].shift(1)) >= mid_line) &
-                            (macd_line.shift(1) < signal_line.shift(1)) & 
-                            (macd_line.shift(2) > signal_line.shift(2)), 1, 0)
-    else:
-        if smi_data is not None:
-            candles = smi_combine(candles=candles, smi_data=smi_data)
-
-        buy_signal = np.where((candles["p"] == 1) &
-                            (np.minimum(candles['open'].shift(1), candles['low'].shift(1)) <= lower_boll.shift(1)) & 
-                            (np.maximum(candles['open'].shift(1), candles['low'].shift(1)) <= mid_line) & 
-                            (macd_line.shift(1) > signal_line.shift(1)) & 
-                            (macd_line.shift(2) < signal_line.shift(2)), 1, 0) 
-
-        sell_signal = np.where((candles["p"] == -1) &
-                            (np.maximum(candles['open'].shift(1), candles['close'].shift(1)) >= upper_boll.shift(1)) & 
                             (np.minimum(candles['open'].shift(1), candles['close'].shift(1)) >= mid_line) & 
                             (macd_line.shift(1) < signal_line.shift(1)) & 
                             (macd_line.shift(2) > signal_line.shift(2)), 1, 0)
+    else:
+        if filtering_data is not None:
+            candles = smi_combine(candles=candles, smi_data=filtering_data)
+
+        buy_signal = np.where((np.minimum(candles['open'].shift(1), candles['close'].shift(1)) <= lower_boll.shift(1)) & 
+                            (np.maximum(candles['open'].shift(1), candles['close'].shift(1)) <= mid_line) & 
+                            (macd_line.shift(1) > signal_line.shift(1)) & 
+                            (macd_line.shift(2) < signal_line.shift(2)) & (candles["p"] == 1), 1, 0) 
+
+        sell_signal = np.where((np.maximum(candles['open'].shift(1), candles['close'].shift(1)) >= upper_boll.shift(1)) & 
+                            (np.minimum(candles['open'].shift(1), candles['close'].shift(1)) >= mid_line) & 
+                            (macd_line.shift(1) < signal_line.shift(1)) & 
+                            (macd_line.shift(2) > signal_line.shift(2)) & (candles["p"] == 1), 1, 0)
     
-    candles['b_signals'] = buy_signal
+    candles['b_signals'] = buy_signal 
     candles['s_signals'] = sell_signal
 
-    return candles
+    if get_series:
+        if series_type == "buy":
+            return candles["b_signals"]
+        if series_type == "sell":
+            return candles["s_signals"]
+    else:
+        return candles
