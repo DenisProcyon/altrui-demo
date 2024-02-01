@@ -1,6 +1,6 @@
 # Demo of my algo trading project
 
-##### The following repo contains the base and approximately 50% of the functionality of my main algo trading project that has been in development for 1 year+ 
+The following repo contains the base and approximately 50% of the functionality of my main algo trading project that has been in development for 1 year+ 
 
 ### Files/Modules Description
 
@@ -192,4 +192,6 @@ instrument = BaseInstrument(
     }
 )
 ```
-    
+
+# Conclusion 
+I believe that the project totally brings some valuable benefits for backtesting and strategies realization for TA/SM approaches. However, I found it hard to keep any of implemented strategies to be regularly profitable. In fact, I indeed made some in fact profitable ones but did not manage to adapt them for new market conditions as it happened in Autumn 2023.
