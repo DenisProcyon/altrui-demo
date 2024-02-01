@@ -203,7 +203,7 @@ def main():
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=1)
 
         result = {}
-        for i in [3]:
+        for i in [3, 5, 7, 10, 15, 20]:
             model = DecisionTreeClassifier(max_depth=i)
             model = model.fit(X_train, Y_train)
 
