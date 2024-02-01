@@ -73,7 +73,9 @@ class DecisionTree(BaseInstrument):
         
         nodes = tuple(nodes)
 
-        data = decision_tree.get_data(self.candles, nodes, mode=self.additional_config["mode"])
+        mode = self.additional_config.get("mode", "buy")
+
+        data = decision_tree.get_data(self.candles, nodes, mode=mode)
 
         return ksreversal.get_data(
             data,

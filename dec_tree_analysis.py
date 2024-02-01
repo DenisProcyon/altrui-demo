@@ -105,7 +105,7 @@ def get_best_path(nodes: list):
     
     target_samples = sorted(samples, key=lambda x: (x[0], -x[1]))
 
-    print(target_samples[0:2])
+    print(target_samples[0:5])
 
     for node in nodes:
         if target_samples[0] == node["samples"][0].tolist():
@@ -161,9 +161,9 @@ def main():
 
     for session in sessions:
         session_id = session[0]
-        ticker = session[1]
+        session_name = session[1]
 
-        print(f'Session for {ticker}. Session id - {session_id}')
+        print(f'Session for {session_name}. Session id - {session_id}')
 
         pos_data = get_positions_data(session_id=session_id)
         m_data = get_m_data(pos_data).dropna()
@@ -200,11 +200,11 @@ def main():
         X = m_data[features]
         Y = m_data["success"].astype(int)
 
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.5, random_state=1)
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=1)
 
         result = {}
-        for i in [3, 5, 10, 15, 20, 25, 30, 35, 40]:
-            model = DecisionTreeClassifier(max_depth=i, class_weight={0: 1, 1: 2})
+        for i in [3]:
+            model = DecisionTreeClassifier(max_depth=i)
             model = model.fit(X_train, Y_train)
 
             y_pred = model.predict(X_test)
@@ -212,17 +212,17 @@ def main():
             print(metrics.accuracy_score(Y_test, y_pred))
 
             fig = plt.figure(figsize=(20,5))
-            tree_representation = tree.plot_tree(model, feature_names=features, filled=True)
+            tree_representation = tree.plot_tree(model, feature_names=features, filled=True, precision=5)
             
-            if not os.path.exists(f'decision_trees/{ticker}'):
-                os.makedirs(f'decision_trees/{ticker}')
-            pickle.dump(fig, open(f'decision_trees/{ticker}/layers{i}TEST.fig.pickle', "wb"))
+            if not os.path.exists(f'decision_trees/{session_name}'):
+                os.makedirs(f'decision_trees/{session_name}')
+            pickle.dump(fig, open(f'decision_trees/{session_name}/layers{i}.fig.pickle', "wb"))
             
             print(f'Layer {i}')    
 
             best_path = construct_tree_representation(tree_repr=model.tree_, features=features)
 
-            result[ticker] = best_path
+            result[session_name] = best_path
            
         print(json.dumps(result, indent=2).replace('",\n     ', '",') + ",")
 
