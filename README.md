@@ -193,5 +193,14 @@ instrument = BaseInstrument(
 )
 ```
 
+# Monitoring Implementation
+For monitoring purposes, to be precise, to control the identity of trade execution in live trading and on backtest I am using grafana.
+Example:
+![image](https://github.com/DenisProcyon/altrui-demo/assets/92217845/e21f2f2a-9bf2-4f97-aa06-3ef136b9dcec)
+
+Dashboard (public):
+http://138.68.94.147:3000/d/12345/lv-bt-monitoring?orgId=1&from=1715634000000&to=1715893199000&shareView=link
+
+
 # Conclusion 
 I believe that the project brings valuable benefits for backtesting and strategies realization for TA/SM approaches. However, it is still extremely important to find consistent approaches for different market conditions. As of May 2025 I do have consistent strategy working fine and profitably since we do understand general bullish macro context of the market. 
