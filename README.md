@@ -203,4 +203,4 @@ http://138.68.94.147:3000/d/12345/lv-bt-monitoring?orgId=1&from=1715634000000&to
 
 
 # Conclusion 
-I believe that the project brings valuable benefits for backtesting and strategies realization for TA/SM approaches. However, it is still extremely important to find consistent approaches for different market conditions. As of May 2025 I do have consistent strategy working fine and profitably since we do understand general bullish macro context of the market. 
+I believe that the project brings valuable benefits for backtesting and strategies realization for TA/SM approaches. However, it is still extremely important to find consistent approaches for different market conditions. As of May 2024 I do have consistent strategy working fine and profitably since we do understand general bullish macro context of the market. 
