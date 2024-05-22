@@ -194,4 +194,4 @@ instrument = BaseInstrument(
 ```
 
 # Conclusion 
-I believe that the project totally brings some valuable benefits for backtesting and strategies realization for TA/SM approaches. However, I found it hard to keep any of implemented strategies to be regularly profitable. In fact, I indeed made some in fact profitable ones but did not manage to adapt them for new market conditions as it happened in Autumn 2023.
+I believe that the project brings valuable benefits for backtesting and strategies realization for TA/SM approaches. However, it is still extremely important to find consistent approaches for different market conditions. As of May 2025 I do have consistent strategy working fine and profitably since we do understand general bullish macro context of the market. 
