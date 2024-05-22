@@ -115,7 +115,7 @@ The following repo contains the base and approximately 50% of the functionality 
 # Decision Tree Strategy Implementation
 
 ### Context
-For initial signals allocation in dataset (to make model be based on something) I used my previous strategy which was configured specificly for bearish market and died in Autumn 2023 since all this trend with ETFs became to rise. It was changed significally and adapted for new market conditions but was still not proven to be strictly and continiously profitable on a backtest. 
+For initial signals allocation in dataset (to make model be based on something) I used my previous strategy which was configured specificly for bearish market and died in Autumn 2023 since all this trend with ETFs became to rise. It was changed significally and adapted for new market conditions.
 
 ### Files/Modules Description
 - `dec_tree_analysis.py`
