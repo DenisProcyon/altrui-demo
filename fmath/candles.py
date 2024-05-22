@@ -3,7 +3,13 @@ from binance.client import Client
 from binance.enums import HistoricalKlinesType
 from datetime import datetime
 
-class   Candles:
+import pandas as pd
+import numpy as np
+from pathlib import Path
+import os
+
+
+class Candles:
     def __init__(self, ticker: str, time_interval: str, futures: bool, time_limit: str = None, currency_mode: bool = False, client = None):
         if client is None:
             self.client = Client(CREDS.get("TEST_API_TOKEN"), CREDS.get("TEST_SECRET_KEY"), testnet=False, requests_params={"timeout": 120})
@@ -13,7 +19,6 @@ class   Candles:
         self.time_interval = time_interval
         self.time_limit = time_limit
         self.futures = futures
-        self.currency_mode = currency_mode
 
     @property
     def constants(self):
@@ -42,7 +47,7 @@ class   Candles:
                 "open": float(candle[1]),
                 "high": float(candle[2]), "low" : float(candle[3]), 
                 "close": float(candle[4]),
-                "volume": candle[5], 
+                "volume": float(candle[5]), 
                 "close_time": candle[6],
                 "quote_asset_volume": float(candle[7]),
                 "number_of_trades": float(candle[8]), 
@@ -69,11 +74,36 @@ class   Candles:
         candles = self.upgrade_candles(candles)
 
         return candles
+    
+    def get_from_storage(self, file: Path, start_s: int, end_s: int):
+        candles = pd.read_csv(file)
 
-    def get_historical_data(self, start: int, end: int):
-        if self.currency_mode:
-            return self.get_currency_historical_data(start, end)
+        target_candles = candles[(candles["close_time"] >= start_s) & (candles["close_time"] <= end_s)]
 
+        return target_candles
+    
+    def put_to_storage(self, data: list[dict], start_s: int, end_s: int):
+        data.to_csv(Path(f'./candles_storage/{self.ticker}_{self.time_interval}_{start_s}_{end_s}.csv'), index=False)
+
+    def get_historical_data(self, start: str, end: str):
+        try:
+            start_s = int(datetime.timestamp(datetime.strptime(start, "%d %b %Y")) * 1000)
+            end_s = int(datetime.timestamp(datetime.strptime(end, "%d %b %Y")) * 1000)
+        except ValueError as e:
+            start_s = int(float(start))
+            end_s = int(float(end))
+            
+        dir_path = Path("./candles_storage")
+
+        from_storage = False
+        for file in dir_path.rglob("*.csv"):
+            file_name = str(file).split("/")[-1]
+            ticker, time_int, start_ts, end_ts = [i.replace(".csv", "") for i in file_name.split("_")]
+            if ticker == self.ticker and time_int == self.time_interval and int(start_ts) <= start_s and int(end_ts) >= end_s:
+                candles = self.get_from_storage(file=file, start_s=start_s, end_s=end_s)
+                print(f'Got candles from {file_name}')
+                return candles
+        
         time_interval = self.constants["intervals"][self.time_interval]
         
         if self.futures:
@@ -81,6 +111,11 @@ class   Candles:
         else:
             candles = self.client.get_historical_klines(self.ticker, time_interval, start_str=start, end_str=end)
         
-        candles = self.upgrade_candles(candles)
+        candles = pd.DataFrame(self.upgrade_candles(candles))
+
+        if not from_storage:
+            self.put_to_storage(data=candles, start_s=start_s, end_s=end_s)
 
         return candles
+
+            
